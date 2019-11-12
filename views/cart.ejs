@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <%- include('bootstrap') %>
+</head>
+<body>
+    <h1>Products to be Checkout!</h1>
+     <!-- <form action="/pay" method="POST"> -->
+    <form id="form" class="ml-3">
+        <% for(var i=0; i < c.length; i++) { %>
+        <b>Product name :</b> <%= c[i].Name %> <br>
+        <b>Description :</b> <%= c[i].Desc %><br>
+        <b>Price :</b> <%= c[i].Price %><br>
+        <b>User Quantity :</b> <%= c[i].Quantity %><br>
+        <b>TotalCost :</b> <%= c[i].TotalCost %><br>
+            <hr>
+        <br>
+        <% } %> 
+        <b>Total Payable Amount :<%= sum %></b><br><br>
+        <!-- <input type="submit" value="Pay"> -->
+        <button class="btn btn-info" onclick="formSubmit(event)">Pay</button>
+        
+    </form>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="cart.js"></script>
+
+
+<script>
+        function formSubmit(event)
+        {
+            event.preventDefault();
+
+            sendDetail();
+        }
+
+        function sendDetail()
+        {
+            axios.post('/pay')
+            .then((response)=>{
+                if(response.status===200 && response.data.error==="Done")
+                {
+                    let timerInterval
+                    Swal.fire({
+                    icon:'success',
+                    title: 'Your Payment is successfully Done!',
+                    html: '',
+                    timer: 1500,
+                    timerProgressBar: true,
+                    onBeforeOpen: () => {
+                        Swal.showLoading()
+                        timerInterval = setInterval(() => {
+                        Swal.getContent().querySelector('b')
+                            .textContent = Swal.getTimerLeft()
+                        }, 100)
+                    },
+                    onClose: () => {
+                        clearInterval(timerInterval);
+                        document.getElementById("form").reset();
+                        location.replace('/view-product');
+                    }
+                    }).then((result) => {
+                    if (
+                        /* Read more about handling dismissals below */
+                        result.dismiss === Swal.DismissReason.timer
+                    ) {
+                        console.log('I was closed by the timer') // eslint-disable-line
+                    }
+                    })                    
+                }
+
+            })
+        }
+
+
+</script>
+
+
+
+</html>

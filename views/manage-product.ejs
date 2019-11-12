@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.js"
+      integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+      crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+  <%- include('bootstrap') %>
+
+      <style>
+        #make{
+            display: none;
+        }
+
+      .pDiv{
+        float: left;
+        width: auto;
+        height: auto;
+        padding: 10px;
+        box-shadow: 0px 4px 8px 0px #c1c1c1;
+        border: 1px solid #ccc;
+      }
+     
+      </style>
+</head>
+<body>
+    <button type="button" id="aAddProduct" class="ml-2 mt-1 btn btn-dark">Add New Product</button>
+    <h1 id="democlass"></h1>
+    <div class="row">
+        <div class="col-md-8">
+          <form action="/addProducts" method="POST" id="divAddProduct" class="ml-2" ></form>
+          <form class="ml-2" id="divUpdateProduct"></form>
+        </div>
+
+        <div class="col-md-4" id="make">
+          <div class="card" style="width: 18rem;">
+            <div class="card-body">
+
+              <span>Name: </span><span class="card-text" id="adminName"></span><br>
+              <span>Designation: </span><span class="card-text">DBA</span><br>
+              <a href="/logOutAdmin" style="text-align: center;">LogOut</a>
+            </div>
+          </div>
+        </div>
+
+    </div> 
+     <br><br>
+     <hr style="border:1px solid black">
+     <div>
+         <h3 style="text-align: center;">List Of Products</h3>
+    </div>
+
+    <% if(product) { %>
+            <br>
+
+            <% for(let i=0; i< product.length; i++) { %>
+            <div id="<%= product[i]._id %>" class="pDiv ml-5 mb-3" >
+                <b>Product name :</b> <span id="pname"><%= product[i].Name %></span><br>
+                <b>Description :</b> <span id="pdesc"><%= product[i].Desc %></span><br>
+                <b>Price :</b> <span id="pprice"><%= product[i].Price %></span><br>
+                <b>Quantity :</b><span id="pqty"><%= product[i].Quantity %></span><br>
+    
+                <button type="submit" id="checkEdit" class="editBtn btn btn-primary mt-3" >Edit</button>
+                
+                <form action="/product/<%= product[i]._id %>" class="float-right mt-3" method="POST">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>        
+            
+            <% } %>
+            <% } %>
+
+
+</body>
+<script src="/script.js"  type="text/javascript"></script>
+
+
+
+<script>
+  
+    window.location.hash="no-back-button";
+    window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+    window.onhashchange=function(){window.location.hash="no-back-button";}
+
+document.getElementById("checkEdit").addEventListener("click",function(){
+  fetch("/checkEdit",{
+      method:"GET",
+    })
+    .then((res)=>
+    {
+      return res.json();
+    })
+    .then((res)=>
+    {
+      if(res.code==200)
+      {
+        $(document).ready(function(){
+          $("#make").show();
+        })
+      }
+      else{
+        location.reload();       
+      }
+    })
+    .catch((err)=>
+    {
+      console.log(err);
+    })
+})
+
+document.querySelector("#aAddProduct").addEventListener("click", function()
+{
+  fetch("/checkadmin",{
+      method:"GET",
+    })
+    .then((res)=>
+    {
+      return res.json();
+    })
+    .then((res)=>
+    {
+      if(res.code===200)
+      {
+        $(document).ready(function(){
+          $("#make").show();
+        });
+
+        document.getElementById("adminName").innerHTML=res.uname;
+          
+      }
+      else{
+        // location.replace("/login/1")
+        swal({ 
+          icon:"error",
+          title: "OOPS!!",
+          text: "LoggedIn to your account",
+          })
+        .then((value) => {
+          if(!value)
+          {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning',
+                text: 'You Are Not Logged In!',
+                footer: '<a href="/login/1">Login Here</a>'
+              }).then((res)=>{
+                location.href="/login/1";
+              })
+          }
+          else{
+            location.replace("/login/1");
+          }
+      });
+    }
+        
+        
+      })
+    .catch((err)=>
+    {
+      console.log(err);
+    })
+})
+
+
+</script>
+
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+	<title>Register to e-kart</title>
+	<script src="https://code.jquery.com/jquery-2.2.4.js"
+      integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+      crossorigin="anonymous"></script>
+	  <%- include('bootstrap') %>
+	  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+	<script>
+	    window.location.hash="no-back-button";
+    window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+    window.onhashchange=function(){window.location.hash="no-back-button";}
+	</script>
+
+</head>
+
+<body>
+
+	<h1 style="text-align:center">Login to e-kart</h3>
+		<!-- <div id="container" style="text-align:center;">
+			<div id="registerBox" style="width:35%;height:35%;background:#c0c0c0;display:inline-block">
+				<div style="text-align:left;margin:5%">
+
+					<% if(data==="0") { %>
+
+					<form action="/checkUser/0" method="POST">
+						<span>Email &nbsp &nbsp <input type="email" placeholder="abc123@xyz.com" id="email" name="email"
+								style="margin-left:20%" required></span><br><br>
+						<span>Password &nbsp &nbsp <input type="password" id="password" name="pwd"
+								style="margin-left:15%" placeholder="Password" required></span><br><br>
+						<input type="submit" id="loginButton" value="Login"
+							style="width:35%;height:18%;margin-top:10% ">
+					</form>
+
+					<a href="/register">Don't have an account?</a>
+
+					<%  } else{  %>
+					<form action="/checkUser/1" method="POST">
+						<span>Email &nbsp &nbsp <input type="email" placeholder="abc123@xyz.com" id="email" name="email"
+								style="margin-left:20%" required></span><br><br>
+						<span>Password &nbsp &nbsp <input type="password" id="password" name="pwd"
+								style="margin-left:15%" placeholder="Password" required></span><br><br>
+						<input type="submit" id="loginButton" value="Login"
+							style="width:35%;height:18%;margin-top:10% ">
+					</form>
+					<% } %>
+
+
+				</div>
+			</div>
+		</div> -->
+
+
+		<div class="container mt-5 p-4 shadow-lg" style="width: 20em;">
+			
+					<% if(data==="0") { %>
+						<form id="form0"> 
+							<div class="row">
+							<div class="col-md-12 mb-3">
+							<label for="validationServer02">Email</label>
+							<input type="email" class="form-control " placeholder="abc123@xyz.com" name="email" id="email" required>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 mb-3">
+							<label for="validationServer03">Password</label>
+							<input type="password" class="form-control "  name="pwd" id="password" placeholder="Password" required>
+							
+							</div>
+						</div>
+							<button class="btn btn-success" style="margin-left:45%" id="loginButton0" onclick="user(event)" type="submit" >Login</button>
+						</form>
+						<a href="/register">Don't have an account?</a>
+						<% } else{  %>
+							<form id="form1"> 
+									<div class="row">
+									<div class="col-md-12 mb-3">
+									<label for="validationServer02">Email</label>
+									<input type="email" class="form-control " placeholder="abc123@xyz.com" name="email" id="email1" required>
+									</div>
+									</div>
+									
+									<div class="row">
+									<div class="col-md-12 mb-3">
+									<label for="validationServer03">Password</label>
+									<input type="password" class="form-control "  name="pwd" id="password1" placeholder="Password" required>
+									
+									</div>
+									</div>
+									
+									<button class="btn btn-success" style="margin-left:45%" id="loginButton1" onclick="admin(event)" type="submit" >Login</button>
+							</form>
+							<% } %>
+			</div>
+		</div>
+		
+
+</body>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+function user(event){
+		event.preventDefault();
+		var email = document.getElementById("email").value;
+		var pwd = document.getElementById("password").value;
+		axios.post("/checkUser/0",{email,pwd})
+		.then((res)=>{
+			if(res.data.success==="success")
+			{
+				makeAlert0();
+				document.getElementById("form0").reset();
+			}
+			else if(res.data.error==="empty")
+			{
+				Swal.fire({
+				icon: 'error',
+				title: 'Oops...',
+				text: 'Fill Empty Fields',
+				})
+				document.getElementById("form0").reset();
+			}
+			else{
+				Swal.fire({
+				icon: 'error',
+				title: 'Oops...',
+				text: 'Invalid Credentials!',
+				})
+				document.getElementById("form0").reset();
+			}
+		})
+	}
+
+
+function admin(event){
+	event.preventDefault();
+	var email = document.getElementById("email1").value;
+	var pwd = document.getElementById("password1").value;
+	axios.post("/checkUser/1",{email,pwd})
+	.then((res)=>{
+		if(res.data.success==="success")
+		{
+			makeAlert1();
+			document.getElementById("form1").reset();
+		}
+		else if(res.data.error==="empty")
+		{
+			Swal.fire({
+			icon: 'error',
+			title: 'Oops...',
+			text: 'Fill Empty Fields',
+			})
+			document.getElementById("form1").reset();
+			
+		}
+		else if(res.data.error==="wrong"){
+			Swal.fire({
+			icon: 'error',
+			title: 'Oops...',
+			text: 'Invalid Credentials!',
+			})
+			document.getElementById("form1").reset();
+			
+		}
+	})
+}
+
+
+
+
+function makeAlert0()
+{
+  let timerInterval
+  Swal.fire({
+    title: '<h2>Good job!</h2>',
+    html: '<h3>Logging In</h3>',
+    timer: 1000,
+    timerProgressBar: true,
+    onBeforeOpen: () => {
+      Swal.showLoading()
+      timerInterval = setInterval(() => {
+        Swal.getContent().querySelector('b')
+          .textContent = Swal.getTimerLeft()
+      }, 100)
+    },
+    onClose: () => {
+	  clearInterval(timerInterval);
+      location.replace("/view-product");
+    }
+  }).then((result) => {
+    if (
+      result.dismiss === Swal.DismissReason.timer
+    ) {
+      console.log('I was closed by the timer')
+    }
+  })
+}
+
+
+function makeAlert1()
+{
+  let timerInterval
+  Swal.fire({
+    title: '<h2>Good job!</h2>',
+    html: '<h3>Registered Successfully</h3>',
+    timer: 1000,
+    timerProgressBar: true,
+    onBeforeOpen: () => {
+      Swal.showLoading()
+      timerInterval = setInterval(() => {
+        Swal.getContent().querySelector('b')
+          .textContent = Swal.getTimerLeft()
+      }, 100)
+    },
+    onClose: () => {
+      clearInterval(timerInterval)
+      location.replace("/");
+    }
+  }).then((result) => {
+    if (
+      result.dismiss === Swal.DismissReason.timer
+    ) {
+      console.log('I was closed by the timer')
+    }
+  })
+}
+
+
+
+</script>
+
+
+
+
+
+</html>
+
+

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.js"
+      integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+      crossorigin="anonymous"></script>
+    <%- include('bootstrap') %>
+
+    <script>
+    
+    window.location.hash="no-back-button";
+    window.location.hash="Again-No-back-button";//again because google chrome don't insert first hash into history
+    window.onhashchange=function(){window.location.hash="no-back-button";}
+    </script>
+</head>
+
+<body class="ml-2">
+    <br>
+    <span id="currentUser"></span>
+    
+    <div style="float:right; margin-right:50px;">
+    <%  if(user) { %>
+        <h5>Hi! <%= user %> | <a href="/logOut">LogOut</a></h5>
+    <% } %>
+    <br>
+    
+    </div>
+
+    <div id="left" style="width:60%; float:left;">
+        <h1>Products</h1>
+        <br>
+        <% for(var i=0; i< product.length; i++) { %>
+        <form id="form" class="pl-2 pb-2 flow-control rounded shadow-lg" style="border:2px solid black; width: 20em;">
+            <b>Product name :</b> <%= product[i].Name %> <br>
+            <b>Description :</b> <%= product[i].Desc %><br>
+            <b>Price :</b> <%= product[i].Price %><br>
+            <b>Total Quantity :</b> <%= product[i].Quantity %><br>
+
+            <!-- <input type="text" hidden value="<%= product[i]._id %>" name="id"> -->
+           <% if(product[i].Quantity==0){ %>
+            <button class="btn btn-warning ml-3" disabled>Out Of Stock</button><br>
+           <% } else{ %>
+
+            <input type="number" placeholder="Enter Quantity" name="UserQty" id="<%= product[i]._id %>"> 
+            <button onclick="formSubmit(event,'<%= product[i]._id %>')" class="btn btn-outline-primary" > AddToCart</button>
+           <% } %>
+        </form>
+
+        <br>
+        <% } %>
+    </div>
+
+    <div id="right" style="width:40%; float:right;">
+        <% if(cart) { %>
+        <h1>Added Products To Cart</h1>
+        <% for(var i=0; i < cart.length; i++) { %>
+            <div class="shadow-lg border p-2 mt-3 rounded" style="width: 20em;">
+        <b>Product name :</b> <%= cart[i].Name %> <br>
+        <b>Description :</b> <%= cart[i].Desc %><br>
+        <b>Price :</b> <%= cart[i].Price %><br>
+        <b>User Quantity :</b> <%= cart[i].Quantity %><br>
+        <b>TotalPrice :</b> <%= cart[i].TotalCost %><br>
+
+        <form action="/cart/<%= cart[i]._id %>" method="POST">
+            <input type="submit" class="btn btn-danger" value="Discard">
+        </form>
+    </div>
+        
+        <% } } %>
+        <!-- <form action="/cart" method="GET"> -->
+            <center><a href="/checkOut"><button class="btn btn-success mt-4">CheckOut</button></a></center>
+        <!-- </form> -->
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script src="viewProduct.js"></script>
+<script>
+
+    // function check()
+    // {
+    //     if(document.cookie)
+    //     return true;
+    //     else
+    //     return false;
+    // }
+
+
+    // console.log(document.cookie);
+
+    function formSubmit(event, id){
+        event.preventDefault()
+        var qty = document.getElementById(id).value
+        sendDetail( id, qty ,event)
+    }
+    function sendDetail(id, qty,event){
+        event.preventDefault();
+        axios.post('addToCart', {id, qty})
+        .then((response)=>{
+                if(response.data.error === "qtyError"){
+                    makeAlert();
+                }
+                if(response.status===200)
+                {
+                    location.reload();
+                }
+
+                if( response.data.cookieError === "login"){
+                    location.replace('/login/0')
+                }
+                if(response.data.error==="toLogin")
+                {
+                    location.replace('/login/0');
+                }
+
+            
+        })
+    }
+
+</script>
+
+<script>
+
+function makeAlert()
+{
+    let timerInterval
+Swal.fire({
+  icon: 'question',  
+  title: 'Enter Valid Quantity',
+  html: '',
+  timer: 500,
+
+  timerProgressBar:false,
+  onBeforeOpen: () => {
+    Swal.showLoading()
+    timerInterval = setInterval(() => {
+      Swal.getContent().querySelector('b')
+        .textContent = Swal.getTimerLeft()
+    }, 100)
+  },
+  onClose: () => {
+    clearInterval(timerInterval);
+    location.reload();
+  }
+}).then((result) => {
+  if (
+    /* Read more about handling dismissals below */
+    result.dismiss === Swal.DismissReason.timer
+  ) {
+    console.log('I was closed by the timer') // eslint-disable-line
+  }
+})
+}
+
+
+</script>
+
+
+
+
+</html>
+
+
+
+

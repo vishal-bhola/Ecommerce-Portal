@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="orderPanel.js"></script>
+    <%- include('bootstrap') %>
+</head>
+<body>
+    <h1 class="text-center my-4">Order Placed</h1>
+    <% if(order) { %>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr class="text-center">
+                    <th scope="col">UserName</th>
+                    <th scope="col">ProductId</th>
+                    <th scope="col">ProductName</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">TotalPrice</th>
+                    <th scope="col">Date</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <% for(var i=0;i< order.length;i++) {%>
+                    <tr class="text-center">
+                        <th scope="row"><%= order[i].userName %></th>
+                        <td><%= order[i].PId %></td>
+                        <td><%= order[i].Name %></td>
+                        <td><%= order[i].Desc %></td>
+                        <td><%= order[i].Price %></td>
+                        <td><%= order[i].Quantity %></td>
+                        <td><%= order[i].TotalCost %></td>
+                        <td><%= order[i].Date %></td>
+                    </tr>
+            
+                <% } %>
+            </tbody>
+        </table>
+       
+        <% } %>
+        <br>
+</body>
+</html>
