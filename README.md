@@ -1,2 +1,2 @@
 # Ecommerce
-Using NodeJS(Express) ,MongoDB
+User friendly Ecommerce Website, where user can purchase products. MAde Using NodeJS(Express) ,MongoDB, ejs
